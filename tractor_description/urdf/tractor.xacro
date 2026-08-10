@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tow_tractor">
+
+  <!-- Load Vehicle Info from YAML -->
+  <xacro:property name="vehicle_info" value="${load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
+
+  <!-- Extract Parameters -->
+  <xacro:property name="wheel_radius" value="${vehicle_info['wheel_radius']}"/>
+  <xacro:property name="wheel_width" value="${vehicle_info['wheel_width']}"/>
+  <xacro:property name="wheel_base" value="${vehicle_info['wheel_base']}"/>
+  <xacro:property name="track_width" value="${vehicle_info['wheel_tread']}"/>
+  
+  <xacro:property name="front_overhang" value="${vehicle_info['front_overhang']}"/>
+  <xacro:property name="rear_overhang" value="${vehicle_info['rear_overhang']}"/>
+  <xacro:property name="left_overhang" value="${vehicle_info['left_overhang']}"/>
+  <xacro:property name="right_overhang" value="${vehicle_info['right_overhang']}"/>
+  
+  <xacro:property name="vehicle_height" value="${vehicle_info['vehicle_height']}"/>
+  <xacro:property name="hitch_length" value="${vehicle_info['hitch_length']}"/>
+  <xacro:property name="mirror_length" value="${vehicle_info['mirror_length']}"/>
+
+  <!-- CAD Origin Offsets (Do not change unless the CAD file origin changes) -->
+  <xacro:property name="cad_offset_x" value="0.850064"/>
+  <xacro:property name="cad_offset_y" value="-0.001778"/>
+  <xacro:property name="cad_offset_z" value="0"/>
+  <xacro:property name="mesh_scale" value="0.01 0.01 0.01"/>
+  <xacro:property name="mesh_rpy" value="1.570796 0 0"/>
+
+  <!-- Base Link / Chassis -->
+  <link name="base_link">
+    <!-- Visual Mesh -->
+    <visual>
+      <origin xyz="${cad_offset_x} ${cad_offset_y} ${cad_offset_z}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TowTractor_Chassis.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="chassis_mat">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+      </material>
+    </visual>
+    <!-- Primitive Collision Box derived from YAML parameters -->
+    <collision>
+      <origin xyz="${(wheel_base + front_overhang - rear_overhang) / 2} ${(left_overhang - right_overhang) / 2} ${vehicle_height / 2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${wheel_base + front_overhang + rear_overhang} ${track_width + left_overhang + right_overhang} ${vehicle_height}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Front Left Wheel -->
+  <joint name="front_left_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="front_left_wheel"/>
+    <origin xyz="${wheel_base} ${track_width/2} ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="front_left_wheel">
+    <visual>
+      <!-- Dynamic Visual Offset to compensate for CAD origin -->
+      <origin xyz="${cad_offset_x - wheel_base} ${cad_offset_y - track_width/2} ${cad_offset_z - wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TowTractor_FL_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Front Right Wheel -->
+  <joint name="front_right_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="front_right_wheel"/>
+    <origin xyz="${wheel_base} -${track_width/2} ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="front_right_wheel">
+    <visual>
+      <origin xyz="${cad_offset_x - wheel_base} ${cad_offset_y + track_width/2} ${cad_offset_z - wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TowTractor_FR_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Rear Left Wheel -->
+  <joint name="rear_left_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="rear_left_wheel"/>
+    <origin xyz="0 ${track_width/2} ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="rear_left_wheel">
+    <visual>
+      <origin xyz="${cad_offset_x - 0} ${cad_offset_y - track_width/2} ${cad_offset_z - wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TowTractor_RL_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Rear Right Wheel -->
+  <joint name="rear_right_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="rear_right_wheel"/>
+    <origin xyz="0 -${track_width/2} ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="rear_right_wheel">
+    <visual>
+      <origin xyz="${cad_offset_x - 0} ${cad_offset_y + track_width/2} ${cad_offset_z - wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TowTractor_RR_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Hitch -->
+  <joint name="hitch_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="hitch_link"/>
+    <origin xyz="-${hitch_length} 0 0.4" rpy="0 0 0"/>
+  </joint>
+
+  <link name="hitch_link">
+  </link>
+
+</robot>

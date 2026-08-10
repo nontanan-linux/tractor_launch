@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="trailer">
+
+<xacro:macro name="trailer" params="idx">
+  <!-- Load Vehicle Info from YAML -->
+  <xacro:property name="vehicle_info" value="${load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
+
+  <!-- Extract Parameters -->
+  <xacro:property name="trailer_wheel_radius" value="${vehicle_info['trailer_wheel_radius']}"/>
+  <xacro:property name="wheel_width" value="${vehicle_info['wheel_width']}"/>
+  <xacro:property name="hitch_height" value="${vehicle_info['hitch_height']}"/>
+  <xacro:property name="drawbar_top_height" value="${vehicle_info['drawbar_top_height']}"/>
+  
+  <xacro:property name="trailer_track_width" value="${vehicle_info['trailer_track_width']}"/>
+  <xacro:property name="trailer_joint_length" value="${vehicle_info['trailer_joint_length']}"/>
+  <xacro:property name="trailer_left_overhang" value="${vehicle_info['trailer_left_overhang']}"/>
+  <xacro:property name="trailer_right_overhang" value="${vehicle_info['trailer_right_overhang']}"/>
+  <xacro:property name="trailer_hitch_length" value="${vehicle_info['trailer_hitch_length']}"/>
+  <xacro:property name="trailer_thickness" value="${vehicle_info['trailer_thickness']}"/>
+
+  <!-- CAD Origin Offsets (Do not change unless the CAD file origin changes) -->
+  <xacro:property name="cad_offset_x" value="5.08157"/>
+  <xacro:property name="cad_offset_y" value="-0.001778"/>
+  <xacro:property name="cad_offset_z" value="0"/>
+  <xacro:property name="mesh_scale" value="0.01 0.01 0.01"/>
+  <xacro:property name="mesh_rpy" value="1.570796 0 0"/>
+
+  <!-- Trailer Base Link -->
+  <link name="trailer_link_${idx}">
+    <!-- Visual Mesh -->
+    <visual>
+      <origin xyz="${cad_offset_x} ${cad_offset_y} ${cad_offset_z}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/Trailerl.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="trailer_mat">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+      </material>
+    </visual>
+    <!-- Primitive Collision Box derived from YAML parameters -->
+    <collision>
+      <origin xyz="${(trailer_joint_length - trailer_hitch_length) / 2} ${(trailer_left_overhang - trailer_right_overhang) / 2} ${drawbar_top_height + (trailer_thickness / 2)}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${trailer_joint_length + trailer_hitch_length} ${trailer_track_width + trailer_left_overhang + trailer_right_overhang} ${trailer_thickness}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Trailer Left Wheel -->
+  <joint name="tl_wheel_joint_${idx}" type="fixed">
+    <parent link="trailer_link_${idx}"/>
+    <child link="tl_wheel_${idx}"/>
+    <origin xyz="0 ${trailer_track_width/2} ${trailer_wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tl_wheel_${idx}">
+    <visual>
+      <origin xyz="${cad_offset_x - 0} ${cad_offset_y - trailer_track_width/2} ${cad_offset_z - trailer_wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TL_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${trailer_wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Trailer Right Wheel -->
+  <joint name="tr_wheel_joint_${idx}" type="fixed">
+    <parent link="trailer_link_${idx}"/>
+    <child link="tr_wheel_${idx}"/>
+    <origin xyz="0 -${trailer_track_width/2} ${trailer_wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tr_wheel_${idx}">
+    <visual>
+      <origin xyz="${cad_offset_x - 0} ${cad_offset_y + trailer_track_width/2} ${cad_offset_z - trailer_wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/TR_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${trailer_wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="trailer_front_hitch_link_${idx}">
+  </link>
+
+  <!-- Trailer Front Hitch to Axle (trailer_link) -->
+  <joint name="trailer_front_hitch_joint_${idx}" type="fixed">
+    <parent link="trailer_front_hitch_link_${idx}"/>
+    <child link="trailer_link_${idx}"/>
+    <origin xyz="-${trailer_joint_length} 0 -${drawbar_top_height}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Trailer Rear Hitch (To Next Drawbar) -->
+  <joint name="trailer_rear_hitch_joint_${idx}" type="fixed">
+    <parent link="trailer_link_${idx}"/>
+    <child link="trailer_rear_hitch_link_${idx}"/>
+    <origin xyz="-${trailer_hitch_length} 0 ${hitch_height}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="trailer_rear_hitch_link_${idx}">
+  </link>
+
+</xacro:macro>
+
+</robot>

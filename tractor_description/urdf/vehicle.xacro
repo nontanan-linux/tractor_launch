@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="vehicle">
+  <!-- 
+    Autoware tier4_vehicle_launch expects a file named vehicle.xacro in the vehicle_model_description package.
+    We simply redirect it to include the tractor_trailer.xacro (or tractor.xacro).
+    By including tractor_trailer.xacro, the entire tractor and trailer model will be loaded into Autoware.
+  -->
+  <xacro:include filename="$(find tractor_description)/urdf/tractor_trailer.xacro"/>
+</robot>

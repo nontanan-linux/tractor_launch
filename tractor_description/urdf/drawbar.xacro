@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="drawbar">
+
+<xacro:macro name="drawbar" params="idx">
+  <!-- Load Vehicle Info from YAML -->
+  <xacro:property name="vehicle_info" value="${load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
+
+  <!-- Extract Parameters -->
+  <xacro:property name="trailer_wheel_radius" value="${vehicle_info['trailer_wheel_radius']}"/>
+  <xacro:property name="wheel_width" value="${vehicle_info['wheel_width']}"/>
+  <xacro:property name="hitch_height" value="${vehicle_info['hitch_height']}"/>
+  
+  <xacro:property name="drawbar_track_width" value="${vehicle_info['drawbar_track_width']}"/>
+  <xacro:property name="drawbar_joint_length" value="${vehicle_info['drawbar_joint_length']}"/>
+  <xacro:property name="drawbar_left_overhang" value="${vehicle_info['drawbar_left_overhang']}"/>
+  <xacro:property name="drawbar_right_overhang" value="${vehicle_info['drawbar_right_overhang']}"/>
+  <xacro:property name="drawbar_top_height" value="${vehicle_info['drawbar_top_height']}"/>
+
+  <!-- CAD Origin Offsets (Do not change unless the CAD file origin changes) -->
+  <xacro:property name="cad_offset_x" value="3.08664"/>
+  <xacro:property name="cad_offset_y" value="-0.001778"/>
+  <xacro:property name="cad_offset_z" value="0"/>
+  <xacro:property name="mesh_scale" value="0.01 0.01 0.01"/>
+  <xacro:property name="mesh_rpy" value="1.570796 0 0"/>
+
+  <!-- Drawbar Base Link -->
+  <link name="drawbar_link_${idx}">
+    <!-- Visual Mesh -->
+    <visual>
+      <origin xyz="${cad_offset_x} ${cad_offset_y} ${cad_offset_z}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/Drawbar.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="drawbar_mat">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+      </material>
+    </visual>
+    <!-- Primitive Collision Box derived from YAML parameters -->
+    <collision>
+      <origin xyz="${drawbar_joint_length / 2} ${(drawbar_left_overhang - drawbar_right_overhang) / 2} ${(hitch_height + drawbar_top_height) / 2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${drawbar_joint_length} ${drawbar_track_width + drawbar_left_overhang + drawbar_right_overhang} 0.2"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Dolly Left Wheel -->
+  <joint name="dl_wheel_joint_${idx}" type="fixed">
+    <parent link="drawbar_link_${idx}"/>
+    <child link="dl_wheel_${idx}"/>
+    <origin xyz="0 ${drawbar_track_width/2} ${trailer_wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="dl_wheel_${idx}">
+    <visual>
+      <origin xyz="${cad_offset_x - 0} ${cad_offset_y - drawbar_track_width/2} ${cad_offset_z - trailer_wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/DL_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${trailer_wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Dolly Right Wheel -->
+  <joint name="dr_wheel_joint_${idx}" type="fixed">
+    <parent link="drawbar_link_${idx}"/>
+    <child link="dr_wheel_${idx}"/>
+    <origin xyz="0 -${drawbar_track_width/2} ${trailer_wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="dr_wheel_${idx}">
+    <visual>
+      <origin xyz="${cad_offset_x - 0} ${cad_offset_y + drawbar_track_width/2} ${cad_offset_z - trailer_wheel_radius}" rpy="${mesh_rpy}"/>
+      <geometry>
+        <mesh filename="package://tractor_description/mesh/DR_Wheel.obj" scale="${mesh_scale}"/>
+      </geometry>
+      <material name="wheel_mat"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.570796 0 0"/>
+      <geometry>
+        <cylinder radius="${trailer_wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="drawbar_hitch_link_${idx}">
+  </link>
+
+  <!-- Drawbar Hitch to Axle (drawbar_link) -->
+  <joint name="drawbar_hitch_joint_${idx}" type="fixed">
+    <parent link="drawbar_hitch_link_${idx}"/>
+    <child link="drawbar_link_${idx}"/>
+    <origin xyz="-${drawbar_joint_length} 0 -${hitch_height}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Drawbar Top Hitch (To Trailer) -->
+  <joint name="drawbar_top_hitch_joint_${idx}" type="fixed">
+    <parent link="drawbar_link_${idx}"/>
+    <child link="drawbar_top_hitch_link_${idx}"/>
+    <origin xyz="0 0 ${drawbar_top_height}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="drawbar_top_hitch_link_${idx}">
+  </link>
+
+</xacro:macro>
+
+</robot>

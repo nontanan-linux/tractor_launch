@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tractor_trailer">
+
+  <!-- Include all individual components -->
+  <xacro:include filename="$(find tractor_description)/urdf/tractor.xacro" />
+  <xacro:include filename="$(find tractor_description)/urdf/drawbar.xacro" />
+  <xacro:include filename="$(find tractor_description)/urdf/trailer.xacro" />
+
+  <!-- Instantiate Drawbar and Trailer -->
+  <xacro:drawbar idx="1"/>
+  <xacro:trailer idx="1"/>
+  <xacro:drawbar idx="2"/>
+  <xacro:trailer idx="2"/>
+  <xacro:drawbar idx="3"/>
+  <xacro:trailer idx="3"/>
+  <xacro:drawbar idx="4"/>
+  <xacro:trailer idx="4"/>
+
+  <!-- Set 1 -->
+  <joint name="tractor_to_drawbar_1" type="floating">
+    <parent link="hitch_link"/>
+    <child link="drawbar_hitch_link_1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="drawbar_to_trailer_1" type="floating">
+    <parent link="drawbar_top_hitch_link_1"/>
+    <child link="trailer_front_hitch_link_1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Set 2 -->
+  <joint name="trailer_to_drawbar_2" type="floating">
+    <parent link="trailer_rear_hitch_link_1"/>
+    <child link="drawbar_hitch_link_2"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="drawbar_to_trailer_2" type="floating">
+    <parent link="drawbar_top_hitch_link_2"/>
+    <child link="trailer_front_hitch_link_2"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Set 3 -->
+  <joint name="trailer_to_drawbar_3" type="floating">
+    <parent link="trailer_rear_hitch_link_2"/>
+    <child link="drawbar_hitch_link_3"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="drawbar_to_trailer_3" type="floating">
+    <parent link="drawbar_top_hitch_link_3"/>
+    <child link="trailer_front_hitch_link_3"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Set 4 -->
+  <joint name="trailer_to_drawbar_4" type="floating">
+    <parent link="trailer_rear_hitch_link_3"/>
+    <child link="drawbar_hitch_link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="drawbar_to_trailer_4" type="floating">
+    <parent link="drawbar_top_hitch_link_4"/>
+    <child link="trailer_front_hitch_link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

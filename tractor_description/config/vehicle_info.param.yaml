@@ -1,0 +1,33 @@
+/**:
+  ros__parameters:
+    wheel_radius: 0.3
+    wheel_width: 0.3
+    wheel_base: 1.4
+    wheel_tread: 1.0
+    front_overhang: 0.85
+    rear_overhang: 0.7
+    left_overhang: 0.20
+    right_overhang: 0.20
+    # left_overhang: 0.75
+    # right_overhang: 0.75
+    vehicle_height: 2.0
+    max_steer_angle: 0.70
+    hitch_length: 0.70
+    mirror_length: 0.20
+    trailer_wheel_radius: 0.33
+    hitch_height: 0.40
+    
+    # Drawbar parameters
+    drawbar_track_width: 1.0
+    drawbar_joint_length: 1.53
+    drawbar_left_overhang: 0.50
+    drawbar_right_overhang: 0.50
+    drawbar_top_height: 0.70
+    
+    # Trailer parameters
+    trailer_track_width: 1.0
+    trailer_joint_length: 1.98
+    trailer_left_overhang: 0.75
+    trailer_right_overhang: 0.75
+    trailer_hitch_length: 0.515
+    trailer_thickness: 0.20
