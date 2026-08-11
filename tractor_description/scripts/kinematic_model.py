@@ -141,15 +141,16 @@ class TractorTrailerModel:
                 return theta_prev + max_angle
             elif rel < -max_angle:
                 return theta_prev - max_angle
-            return theta_curr
+            return theta_prev + rel
 
-        # Clamp Drawbar Angles
-        # Drawbar angles are at indices 3, 5, 7, ... (3 + 2*i)
-        # Previous angles (Tractor/Trailer) are at 2, 4, 6, ... (2 + 2*i)
+        # Clamp Drawbar and Trailer Angles
         for i in range(self.num_trailers):
-            idx_curr = 3 + 2*i
+            idx_drawbar = 3 + 2*i
             idx_prev = 2 + 2*i
-            new_state[idx_curr] = clamp_angle(new_state[idx_curr], new_state[idx_prev], self.max_drawbar_angle)
+            new_state[idx_drawbar] = clamp_angle(new_state[idx_drawbar], new_state[idx_prev], self.max_drawbar_angle)
+            
+            idx_trailer = 3 + 2*i + 1
+            new_state[idx_trailer] = clamp_angle(new_state[idx_trailer], new_state[idx_drawbar], self.max_drawbar_angle)
         
         return new_state
 

@@ -25,6 +25,9 @@ class NMBOdometer(Node):
         self.declare_parameter('wheel_width', 0.3)
         self.declare_parameter('wheel_tread', 1.0)
         
+        self.declare_parameter('max_steer_angle', 0.70)
+        self.declare_parameter('max_drawbar_angle', 0.70)
+        
         self.declare_parameter('front_overhang', 0.85)
         self.declare_parameter('rear_overhang', 0.70)
         self.declare_parameter('left_overhang', 0.75)
@@ -95,8 +98,17 @@ class NMBOdometer(Node):
                 })
         else:
             self.get_logger().error("Trailer parameter arrays must have equal length!")
+            
+        max_steer_angle = self.get_parameter('max_steer_angle').value
+        max_drawbar_angle = self.get_parameter('max_drawbar_angle').value
         
-        self.model = TractorTrailerModel(self.L0, self.trailers, dt=dt)
+        self.model = TractorTrailerModel(
+            self.L0, 
+            self.trailers, 
+            dt=dt, 
+            max_steering_angle=max_steer_angle, 
+            max_drawbar_angle=max_drawbar_angle
+        )
         
         self.state = np.zeros(3 + 2 * len(self.trailers))
         self.wheel_phi = np.zeros(2 + len(self.trailers))
