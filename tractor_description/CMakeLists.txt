@@ -8,6 +8,7 @@ install(DIRECTORY
   config
   mesh
   urdf
+  launch
   DESTINATION share/${PROJECT_NAME}
 )
 # Install Python scripts
@@ -15,6 +16,18 @@ install(PROGRAMS
   scripts/nmb_odometer_node.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME nmb_odometer_node
+)
+
+install(PROGRAMS
+  scripts/tractor_odometer_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME tractor_odometer_node
+)
+
+install(PROGRAMS
+  scripts/agv_pose_display_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME agv_pose_display_node
 )
 
 # Install kinematic_model.py as a module alongside the node

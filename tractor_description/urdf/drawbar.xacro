@@ -3,7 +3,7 @@
 
 <xacro:macro name="drawbar" params="idx">
   <!-- Load Vehicle Info from YAML -->
-  <xacro:property name="vehicle_info" value="${load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
+  <xacro:property name="vehicle_info" value="${xacro.load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
 
   <!-- Extract Parameters -->
   <xacro:property name="trailer_wheel_radius" value="${vehicle_info['trailer_wheel_radius']}"/>

@@ -1,0 +1,33 @@
+<launch>
+  <arg name="namespace" default="agv1" description="AGV namespace"/>
+  <arg name="vehicle_model" default="tractor" description="Vehicle model package name"/>
+  <arg name="map_elevation" default="0.0" description="Elevation Z offset in meters"/>
+  
+  <arg name="server_adds" default="192.168.2.178" description="FastAPI Server IP Address"/>
+  <arg name="server_port" default="5000" description="FastAPI Server Port"/>
+  <arg name="auth_endpoint" default="/authentication/login" description="Auth endpoint"/>
+  <arg name="position_endpoint" default="/vehicle/vehicles" description="API Endpoint Path"/>
+  <!-- <arg name="username" default="admin3@minebea.co.th" description="Username"/> -->
+  <arg name="username" default="admin2" description="Username"/>
+  <arg name="password" default="admin" description="Password"/>
+  <arg name="vehicle_name" default="AGV1" description="Target AGV Name"/>
+  <arg name="poll_rate_hz" default="2.0" description="Polling frequency in Hz"/>
+
+  <!-- AGV Pose Display Node (Standalone) -->
+  <node pkg="tractor_description" exec="agv_pose_display_node" name="agv_pose_display_node" namespace="$(var namespace)" output="screen">
+    <param from="$(find-pkg-share tractor_description)/config/vehicle_info.param.yaml"/>
+    <param name="namespace" value="$(var namespace)"/>
+    <param name="map_elevation" value="$(var map_elevation)"/>
+    <param name="server_adds" value="$(var server_adds)"/>
+    <param name="server_port" value="$(var server_port)"/>
+    <param name="auth_endpoint" value="$(var auth_endpoint)"/>
+    <param name="position_endpoint" value="$(var position_endpoint)"/>
+    <param name="username" value="$(var username)"/>
+    <param name="password" value="$(var password)"/>
+    <param name="vehicle_name" value="$(var vehicle_name)"/>
+    <param name="poll_rate_hz" value="$(var poll_rate_hz)"/>
+  </node>
+
+  <node pkg="rviz2" exec="rviz2" name="rviz2" output="screen"
+        args="-d $(find-pkg-share tractor_launch)/rviz/display_agv.rviz"/>
+</launch>

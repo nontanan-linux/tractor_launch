@@ -61,6 +61,31 @@
       <child link="imu_link"/>
       <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
     </joint>
+    <!-- Drawbar IMU (Center of drawbar, 0.2m high) -->
+    <link name="drawbar_imu_link">
+      <visual>
+        <geometry><box size="0.1 0.1 0.05"/></geometry>
+        <material name="drawbar_imu_mat"><color rgba="0.0 0.8 0.0 1.0"/></material>
+      </visual>
+    </link>
+    <joint name="drawbar_imu_joint" type="fixed">
+      <parent link="drawbar_link_1"/>
+      <child link="drawbar_imu_link"/>
+      <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Trailer IMU (Center of trailer, 0.2m high) -->
+    <link name="trailer_imu_link">
+      <visual>
+        <geometry><box size="0.1 0.1 0.05"/></geometry>
+        <material name="trailer_imu_mat"><color rgba="0.0 0.8 0.0 1.0"/></material>
+      </visual>
+    </link>
+    <joint name="trailer_imu_joint" type="fixed">
+      <parent link="trailer_link_1"/>
+      <child link="trailer_imu_link"/>
+      <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
+    </joint>
 
   </xacro:macro>
 </robot>

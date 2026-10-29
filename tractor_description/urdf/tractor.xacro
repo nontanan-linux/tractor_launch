@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tow_tractor">
 
   <!-- Load Vehicle Info from YAML -->
-  <xacro:property name="vehicle_info" value="${load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
+  <xacro:property name="vehicle_info" value="${xacro.load_yaml('$(find tractor_description)/config/vehicle_info.param.yaml')['/**']['ros__parameters']}"/>
 
   <!-- Extract Parameters -->
   <xacro:property name="wheel_radius" value="${vehicle_info['wheel_radius']}"/>
